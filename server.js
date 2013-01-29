@@ -75,7 +75,7 @@ app.get("/api", function(req,res) {
 app.post("/api/svg", function(req,res) {
 	res.header("Access-Control-Allow-Origin","*");
 	var filename = process_data(req);
-	res.send(html);
+	res.send(filename);
 });
 app.listen(settings.port, function() {
 	console.log("app running on port", settings.port);
