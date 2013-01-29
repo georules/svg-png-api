@@ -8,7 +8,7 @@ var fs = require('fs');
 var express = require('express');
 var app = express()
 	.use(express.bodyParser())
-	.use('/static', express.static(__dirname+'/static'));
+	.use('/im', express.static(__dirname+'/im'));
 
 function rand_id()	{
 	var id = "";
@@ -20,10 +20,10 @@ function rand_id()	{
 }
 
 function convert(svgdata)	{
-	var id = rand_id();
+	var filename = __dirname+"/im/"+rand_id()+".png";
 	var p = require('child_process').spawn("convert", ["svg:","png:-"]);
 	p.stdout.on('data', function(data) {
-		fs.writeFile(__dirname+'/im/'+id, data, function(err) {
+		fs.writeFile(filename, data, function(err) {
 			if(err)	{
 				console.log(err);
 			}
@@ -31,25 +31,28 @@ function convert(svgdata)	{
 	});
 	p.stdin.write(svgdata);
 	p.stdin.end();
-	return id;
+	return filename;
 }
 
 
 app.get("/", function(req,res)	{
 	var template = Handlebars.templates.base;
-	var html = template({});
+	var html = template({file:false});
 	res.send(html);
 });
 
 app.post("/", function(req,res)	{
-	console.log(req.body);
+	var filename = ""
 	try {
-		convert(req.body.svgcode);
+		filename = convert(req.body.svgcode);
 	}
 	catch (e)	{
 		console.log(e);
 	}
-	res.send(req.body);
+	fname = filename.replace(__dirname,"");
+	var template = Handlebars.templates.base;
+	var html = template({file:fname});
+	res.send(html);
 });
 
 app.get("/api", function(req,res) {
