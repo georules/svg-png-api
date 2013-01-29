@@ -21,14 +21,19 @@ function rand_id()	{
 
 function convert(svgdata)	{
 	var filename = __dirname+"/im/"+rand_id()+".png";
-	var p = require('child_process').spawn("convert", ["svg:","png:-"]);
+	//var infile = fs.writeFile("im/temp.svg", svgdata, {encoding:'binary'});
+	var outfile = fs.createWriteStream(filename, {encoding:'binary'});
+
+	var p = require('child_process').spawn("rsvg-convert",['-f','png']);
+
 	p.stdout.on('data', function(data) {
-		fs.writeFile(filename, data, function(err) {
-			if(err)	{
-				console.log(err);
-			}
-		});
+		outfile.write(data);
 	});
+	p.on('exit', function () {
+		outfile.end();
+	});
+
+	console.log(filename);
 	p.stdin.write(svgdata);
 	p.stdin.end();
 	return filename;
