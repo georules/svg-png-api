@@ -39,6 +39,17 @@ function convert(svgdata)	{
 	return filename;
 }
 
+function process_data(postdata)	{
+	var filename = "";
+	try {
+		filename = convert(postdata.body.svgcode);
+	}
+	catch(e)	{
+		console.log(e);
+	}
+	return filename;
+}
+
 
 app.get("/", function(req,res)	{
 	var template = Handlebars.templates.base;
@@ -47,13 +58,7 @@ app.get("/", function(req,res)	{
 });
 
 app.post("/", function(req,res)	{
-	var filename = ""
-	try {
-		filename = convert(req.body.svgcode);
-	}
-	catch (e)	{
-		console.log(e);
-	}
+	var filename = process_data(req);
 	fname = filename.replace(__dirname,"");
 	var template = Handlebars.templates.base;
 	var html = template({file:fname});
@@ -62,9 +67,16 @@ app.post("/", function(req,res)	{
 
 app.get("/api", function(req,res) {
 	res.header("Access-Control-Allow-Origin","*");
+	info = "post /api/svg requires svgcode parameter"
+	app.routes.post[1].info = info;
 	res.send(app.routes);
 });
 
+app.post("/api/svg", function(req,res) {
+	res.header("Access-Control-Allow-Origin","*");
+	var filename = process_data(req);
+	res.send(html);
+});
 app.listen(settings.port, function() {
 	console.log("app running on port", settings.port);
 });
