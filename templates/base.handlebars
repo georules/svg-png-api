@@ -41,7 +41,7 @@ function getdata() {
 }
 if (id) {
 	$('#output').html('<img src="/static/spinna.gif" alt="spinnas">');
-	var t = setTimeout(getdata, 1000);
+	var t = setInterval(getdata, 1000);
 }
 </script>
 </body>
