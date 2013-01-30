@@ -17,4 +17,6 @@ Requires
 * node.js
 	* express
 	* handlebars
+	* mongoskin
 * rsvg-convert
+* mongodb
