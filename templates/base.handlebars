@@ -34,7 +34,7 @@ var id = $('#myid').html();
 function getdata() {
 	$.get("/api/status/"+id, function(data)	{
 		if (data.completed) {
-			$('#output').html(data.link);
+			$('#output').html("<a href='" + data.link + "'>" + data.link + "</a>");
 			clearInterval(t);
 		}
 	});

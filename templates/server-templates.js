@@ -24,6 +24,6 @@ function program3(depth0,data) {
   stack2 = {};
   stack1 = helpers['if'].call(depth0, stack1, {hash:stack2,inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n		</div>\n	</div>\n<script type=\"text/javascript\">\nvar id = $('#myid').html();\nfunction getdata() {\n	$.get(\"/api/status/\"+id, function(data)	{\n		if (data.completed) {\n			$('#output').html(data.link);\n			clearInterval(t);\n		}\n	});\n}\nif (id) {\n	$('#output').html('<img src=\"/static/spinna.gif\" alt=\"spinnas\">');\n	var t = setTimeout(getdata, 1000);\n}\n</script>\n</body>\n\n</html>\n";
+  buffer += "\n		</div>\n	</div>\n<script type=\"text/javascript\">\nvar id = $('#myid').html();\nfunction getdata() {\n	$.get(\"/api/status/\"+id, function(data)	{\n		if (data.completed) {\n			$('#output').html(\"<a href='\" + data.link + \"'>\" + data.link + \"</a>\");\n			clearInterval(t);\n		}\n	});\n}\nif (id) {\n	$('#output').html('<img src=\"/static/spinna.gif\" alt=\"spinnas\">');\n	var t = setTimeout(getdata, 1000);\n}\n</script>\n</body>\n\n</html>\n";
   return buffer;});
 })();
