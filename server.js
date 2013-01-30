@@ -1,4 +1,5 @@
 var settings = require('./settings');
+var secrets = require('./secrets');
 
 GLOBAL.Handlebars = require('handlebars');
 require('./templates/server-templates');
@@ -7,6 +8,7 @@ var fs = require('fs');
 var mongo = require('mongoskin');
 var db = mongo.db('localhost:27017/svgpngapi');
 var images = db.collection("images");
+var request = require('request');
 
 var express = require('express');
 var app = express()
@@ -20,6 +22,29 @@ function rand_id()	{
 		id += text.charAt(Math.floor(Math.random() * text.length));
 	}
 	return id;
+}
+
+function imgurupload(id, data) {
+	console.log("uploading " + id);
+	bdata = (new Buffer(data)).toString("base64");
+	var headers = {
+		'Authorization': 'Client-ID ' + secrets.IMGUR_CLIENT_ID
+	};
+	var body = {
+		'image': bdata,
+		'title': id,
+		'description':'svg-png-api upload <3'
+	};
+	var options = {
+		method:"post",
+		headers:headers,
+		json:body,
+		url:"https://api.imgur.com/3/image"
+	};
+	request(options, function(e,r,b) {
+		console.log(b);
+		images.update({id:id}, {$set:{completed:true,link:b.data.link}});
+	});
 }
 
 function convert(svgdata)	{
@@ -36,8 +61,14 @@ function convert(svgdata)	{
 	});
 	p.on('exit', function () {
 		outfile.end();
-		image.completed = true;
-		images.update({id:id}, image);
+		fs.readFile(filename, function(e,d)	{
+			if (e) {
+				console.log(err);
+			}
+			imgurupload(id,d);
+		});
+		//image.completed = true;
+		//images.update({id:id}, image);
 	});
 
 	p.stdin.write(svgdata);
