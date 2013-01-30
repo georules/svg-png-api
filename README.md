@@ -6,11 +6,14 @@ Parameters
 
 Response
 ---------
-* the png filename on the server to GET
+* the id to GET /api/status/:id.  Do this until completed==true.  When completed==true, you will get link:url to imgur.  
 
 Todo
 ======
-Make an asyncronous check function to see if processing is done.
+Clean up code, handle errors better
+Consider file cache during processing
+Provide error reponse if error in processing
+Provide the other sizes of the image that imgur processes for you (thumbnail)
 
 Requires
 ==========
