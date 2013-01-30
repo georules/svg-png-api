@@ -4,6 +4,9 @@ GLOBAL.Handlebars = require('handlebars');
 require('./templates/server-templates');
 
 var fs = require('fs');
+var mongo = require('mongoskin');
+var db = mongo.db('localhost:27017/svgpngapi');
+var images = db.collection("images");
 
 var express = require('express');
 var app = express()
@@ -20,8 +23,10 @@ function rand_id()	{
 }
 
 function convert(svgdata)	{
-	var filename = __dirname+"/im/"+rand_id()+".png";
-	//var infile = fs.writeFile("im/temp.svg", svgdata, {encoding:'binary'});
+	var id = rand_id();
+	image = {id:id, createdAt: new Date(), completed: false};
+	images.update({id:id}, image, {upsert:true});
+	var filename = __dirname+"/im/"+id+".png";
 	var outfile = fs.createWriteStream(filename, {encoding:'binary'});
 
 	var p = require('child_process').spawn("rsvg-convert",['-f','png']);
@@ -31,12 +36,13 @@ function convert(svgdata)	{
 	});
 	p.on('exit', function () {
 		outfile.end();
+		image.completed = true;
+		images.update({id:id}, image);
 	});
 
-	console.log(filename);
 	p.stdin.write(svgdata);
 	p.stdin.end();
-	return filename;
+	return id;
 }
 
 function process_data(postdata)	{
@@ -77,6 +83,14 @@ app.post("/api/svg", function(req,res) {
 	var filename = process_data(req);
 	res.send(filename);
 });
+
+app.get("/api/status/:id", function(req,res)	{
+	res.header("Access-Control-Allow-Origin","*");
+	images.findOne({id:req.params.id}, function(err, image)	{
+		res.send(image);
+	});
+});
+
 app.listen(settings.port, function() {
 	console.log("app running on port", settings.port);
 });
