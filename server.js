@@ -13,7 +13,7 @@ var request = require('request');
 var express = require('express');
 var app = express()
 	.use(express.bodyParser())
-	.use('/im', express.static(__dirname+'/im'));
+	.use('/static', express.static(__dirname+'/static'));
 
 function rand_id()	{
 	var id = "";
@@ -25,6 +25,7 @@ function rand_id()	{
 }
 
 function imgurupload(id, data) {
+	try {
 	console.log("uploading " + id);
 	bdata = (new Buffer(data)).toString("base64");
 	var headers = {
@@ -45,6 +46,7 @@ function imgurupload(id, data) {
 		console.log(b);
 		images.update({id:id}, {$set:{completed:true,link:b.data.link}});
 	});
+	} catch(e) {console.log(e);}
 }
 
 function convert(svgdata)	{
@@ -52,6 +54,7 @@ function convert(svgdata)	{
 	image = {id:id, createdAt: new Date(), completed: false};
 	images.update({id:id}, image, {upsert:true});
 	var filename = __dirname+"/im/"+id+".png";
+	try {
 	var outfile = fs.createWriteStream(filename, {encoding:'binary'});
 
 	var p = require('child_process').spawn("rsvg-convert",['-f','png']);
@@ -73,6 +76,8 @@ function convert(svgdata)	{
 
 	p.stdin.write(svgdata);
 	p.stdin.end();
+	}
+	catch(e)	{ console.log(e); }
 	return id;
 }
 
@@ -95,10 +100,13 @@ app.get("/", function(req,res)	{
 });
 
 app.post("/", function(req,res)	{
+	try{
 	var filename = process_data(req);
 	fname = filename.replace(__dirname,"");
 	var template = Handlebars.templates.base;
 	var html = template({file:fname});
+	}
+	catch(e) {console.log(e);}
 	res.send(html);
 });
 
