@@ -14,6 +14,7 @@ Clean up code, handle errors better
 Consider file cache during processing
 Provide error reponse if error in processing
 Provide the other sizes of the image that imgur processes for you (thumbnail)
+Check internal id collision or just use mongodb _id
 
 Requires
 ==========
