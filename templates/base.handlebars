@@ -31,17 +31,17 @@
 	</div>
 <script type="text/javascript">
 var id = $('#myid').html();
-if (id) {
-	$('#output').html('<img src="/static/spinna.gif" alt="spinnas">');
-
+function getdata() {
 	$.get("/api/status/"+id, function(data)	{
 		if (data.completed) {
 			$('#output').html(data.link);
-		}
-		else	{
-			console.log(data);
+			clearInterval(t);
 		}
 	});
+}
+if (id) {
+	$('#output').html('<img src="/static/spinna.gif" alt="spinnas">');
+	var t = setTimeout(getdata, 1000);
 }
 </script>
 </body>
