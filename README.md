@@ -18,5 +18,6 @@ Requires
 	* express
 	* handlebars
 	* mongoskin
+	* request
 * rsvg-convert
 * mongodb
