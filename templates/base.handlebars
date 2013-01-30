@@ -35,7 +35,12 @@ if (id) {
 	$('#output').html('<img src="/static/spinna.gif" alt="spinnas">');
 
 	$.get("/api/status/"+id, function(data)	{
-		$('#output').html(data.completed);
+		if (data.completed) {
+			$('#output').html(data.link);
+		}
+		else	{
+			console.log(data);
+		}
 	}
 }
 </script>
