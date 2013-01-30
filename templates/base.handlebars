@@ -33,6 +33,10 @@
 var id = $('#myid').html();
 if (id) {
 	$('#output').html('<img src="/static/spinna.gif" alt="spinnas">');
+
+	$.get("/api/status/"+id, function(data)	{
+		$('#output').html(data.completed);
+	}
 }
 </script>
 </body>
