@@ -50,7 +50,7 @@ function imgurupload(id, data) {
 }
 
 function convert(svgdata)	{
-	var id = rand_id();
+	var id = rand_id(); // TO-DO: check collision or just use mongodb _id
 	image = {id:id, createdAt: new Date(), completed: false};
 	images.update({id:id}, image, {upsert:true});
 	var filename = __dirname+"/im/"+id+".png";
